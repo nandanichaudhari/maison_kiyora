@@ -425,11 +425,10 @@ export default function HeroVideo({
     setPosterError(false);
   }, [posterSrc]);
 
-  // Respect reduced-motion preference.
-
+  // Autoplay: muted + inline, with one retry when the media is ready.
+  // Reduced-motion users retain the poster and can start video manually.
   useEffect(() => {
     const video = videoRef.current;
-
     if (!video || videoError) return;
 
     if (reducedMotion) {
@@ -437,29 +436,36 @@ export default function HeroVideo({
       return;
     }
 
+    let cancelled = false;
+    let attempting = false;
     video.defaultMuted = true;
     video.muted = true;
     video.playsInline = true;
 
-    let cancelled = false;
-    const attemptPlay = () => {
-      if (cancelled || !video.paused) return;
-      const attempt = video.play();
-      if (attempt && typeof attempt.catch === "function") {
-        attempt.catch(() => {
-          if (!cancelled) setIsPlaying(false);
-        });
+    const attemptPlay = async () => {
+      if (cancelled || attempting || !video.paused) return;
+      attempting = true;
+      try {
+        await video.play();
+      } catch (error) {
+        if (!cancelled) {
+          setIsPlaying(false);
+          console.warn("[Maison Kiyora] Hero autoplay failed:", error?.name, error?.message);
+        }
+      } finally {
+        attempting = false;
       }
     };
 
-    attemptPlay();
-    video.addEventListener("canplay", attemptPlay);
-    video.addEventListener("loadeddata", attemptPlay);
+    void attemptPlay();
+    const onReady = () => { void attemptPlay(); };
+    video.addEventListener("loadeddata", onReady);
+    video.addEventListener("canplay", onReady);
 
     return () => {
       cancelled = true;
-      video.removeEventListener("canplay", attemptPlay);
-      video.removeEventListener("loadeddata", attemptPlay);
+      video.removeEventListener("loadeddata", onReady);
+      video.removeEventListener("canplay", onReady);
       video.pause();
     };
   }, [reducedMotion, videoError, videoSrc]);
@@ -549,7 +555,7 @@ export default function HeroVideo({
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             onVolumeChange={(event) =>
