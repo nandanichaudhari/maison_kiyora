@@ -437,15 +437,29 @@ export default function HeroVideo({
       return;
     }
 
+    video.defaultMuted = true;
     video.muted = true;
+    video.playsInline = true;
 
-    const attempt = video.play();
+    let cancelled = false;
+    const attemptPlay = () => {
+      if (cancelled || !video.paused) return;
+      const attempt = video.play();
+      if (attempt && typeof attempt.catch === "function") {
+        attempt.catch(() => {
+          if (!cancelled) setIsPlaying(false);
+        });
+      }
+    };
 
-    if (attempt && typeof attempt.catch === "function") {
-      attempt.catch(() => setIsPlaying(false));
-    }
+    attemptPlay();
+    video.addEventListener("canplay", attemptPlay);
+    video.addEventListener("loadeddata", attemptPlay);
 
     return () => {
+      cancelled = true;
+      video.removeEventListener("canplay", attemptPlay);
+      video.removeEventListener("loadeddata", attemptPlay);
       video.pause();
     };
   }, [reducedMotion, videoError, videoSrc]);
