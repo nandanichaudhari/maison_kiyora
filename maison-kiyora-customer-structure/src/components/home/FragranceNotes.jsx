@@ -57,7 +57,7 @@ const STYLES = `
   .mk-notes__title{margin:0;font:400 clamp(58px,7vw,105px)/.94 "Cormorant Garamond",Georgia,serif;letter-spacing:-.045em}
   .mk-notes__title em{color:#b69a69;font-weight:400}
   .mk-notes__intro{max-width:410px;margin:0 0 10px auto;color:#756a60;font:400 13px/1.95 "Manrope",sans-serif}
-  .mk-notes__layout{display:grid;grid-template-columns:minmax(290px,.77fr) minmax(0,1.23fr);min-height:620px;border:1px solid #ded5c8}
+  .mk-notes__layout{display:grid;grid-template-columns:minmax(290px,.77fr) minmax(0,1.23fr);min-height:0;border:1px solid #ded5c8}
   .mk-notes__list{padding:clamp(26px,3.7vw,52px);border-right:1px solid #ded5c8}
   .mk-notes__list-label{display:block;margin-bottom:22px;color:#967a51;font:600 10px/1.5 "Manrope",sans-serif;letter-spacing:.2em}
   .mk-notes__item{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:17px 0;border:0;border-bottom:1px solid #e4dbcf;background:none;color:#8a8077;text-align:left;cursor:pointer;transition:color .25s ease,padding .25s ease}
@@ -89,8 +89,55 @@ const STYLES = `
   .mk-notes__footer-copy{color:#81776d;font:500 10px/1.6 "Manrope",sans-serif;letter-spacing:.11em}
   .mk-notes__item:focus-visible,.mk-notes__link:focus-visible{outline:2px solid #b69a69;outline-offset:4px}
   @media(max-width:1120px){.mk-notes__detail{padding:40px 28px}.mk-notes__detail-inner{gap:10px}.mk-notes__image{height:390px}.mk-notes__detail-title{font-size:clamp(42px,4.6vw,65px)}}
-  @media(max-width:850px){.mk-notes__header{grid-template-columns:1fr;gap:20px}.mk-notes__intro{margin-left:0}.mk-notes__layout{grid-template-columns:1fr}.mk-notes__list{border-right:0;border-bottom:1px solid #ded5c8;padding:24px}.mk-notes__list-label{margin-bottom:8px}.mk-notes__list-items{display:flex;gap:22px;overflow-x:auto;scrollbar-width:thin}.mk-notes__item{flex:0 0 auto;width:auto;white-space:nowrap;padding:15px 0}.mk-notes__item--active{padding-left:0}.mk-notes__item--active::before{top:auto;bottom:0;left:0;right:0;width:auto;height:2px}.mk-notes__item-name{font-size:26px}.mk-notes__detail{min-height:480px;padding:38px}.mk-notes__image{height:390px}}
-  @media(max-width:600px){.mk-notes{padding:75px 0}.mk-notes__container{width:calc(100% - 30px)}.mk-notes__title{font-size:clamp(52px,12vw,74px)}.mk-notes__intro{font-size:12px}.mk-notes__detail{padding:55px 22px 35px}.mk-notes__detail-inner{grid-template-columns:1fr;gap:8px}.mk-notes__visual{grid-row:1;min-height:270px}.mk-notes__image{height:300px;max-width:270px}.mk-notes__copy{grid-row:2}.mk-notes__detail-number{top:17px;right:20px;font-size:29px}.mk-notes__detail-title{font-size:clamp(44px,11vw,62px)}.mk-notes__detail-description{font-size:12px}.mk-notes__footer{align-items:flex-start;flex-direction:column}.mk-notes__note-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  /* Tablet: stack the list and details without inheriting desktop heights. */
+  @media (max-width:850px) {
+    .mk-notes__header{grid-template-columns:1fr;gap:20px}
+    .mk-notes__intro{margin-left:0}
+    .mk-notes__layout{grid-template-columns:minmax(0,1fr);min-height:0;height:auto}
+    .mk-notes__list{min-width:0;border-right:0;border-bottom:1px solid #ded5c8;padding:24px}
+    .mk-notes__list-label{margin-bottom:10px}
+    .mk-notes__list-items{display:flex;gap:18px;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+    .mk-notes__item{flex:0 0 auto;width:auto;max-width:none;white-space:nowrap;padding:13px 0}
+    .mk-notes__item--active{padding-left:0}
+    .mk-notes__item--active::before{top:auto;bottom:0;left:0;right:0;width:auto;height:2px}
+    .mk-notes__item-name{font-size:25px}
+    .mk-notes__detail{min-height:0;height:auto;padding:30px}
+    .mk-notes__detail-inner{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .mk-notes__visual{min-height:0}
+    .mk-notes__image{height:330px}
+  }
+  /* Phone: image appears immediately below the swipeable fragrance tabs. */
+  @media (max-width:600px) {
+    .mk-notes{padding:48px 0 52px}
+    .mk-notes__container{width:calc(100% - 30px)}
+    .mk-notes__header{gap:14px;margin-bottom:26px}
+    .mk-notes__eyebrow{margin-bottom:14px}
+    .mk-notes__title{font-size:clamp(46px,11.5vw,66px)}
+    .mk-notes__intro{font-size:12px;line-height:1.7}
+    .mk-notes .mk-notes__layout{display:grid;grid-template-columns:minmax(0,1fr);min-height:0;height:auto}
+    .mk-notes .mk-notes__list{min-width:0;padding:17px 16px 10px}
+    .mk-notes .mk-notes__list-items{display:flex;gap:18px;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap}
+    .mk-notes .mk-notes__item{flex:0 0 auto;width:auto;white-space:nowrap;padding:12px 0}
+    .mk-notes .mk-notes__item-name{font-size:22px}
+    .mk-notes .mk-notes__detail{display:block;min-height:0;height:auto;padding:22px 18px 28px}
+    .mk-notes .mk-notes__detail-inner{display:flex;flex-direction:column;align-items:stretch;gap:12px;min-height:0;height:auto}
+    .mk-notes .mk-notes__visual{order:0;width:100%;min-height:0;height:auto;padding:8px 0 0}
+    .mk-notes .mk-notes__image{width:100%;max-width:240px;height:260px;object-fit:contain;margin-inline:auto}
+    .mk-notes .mk-notes__image-placeholder{height:240px}
+    .mk-notes .mk-notes__copy{order:1;width:100%;min-width:0}
+    .mk-notes .mk-notes__detail-number{top:16px;right:18px;font-size:28px}
+    .mk-notes .mk-notes__detail-label{margin-bottom:8px}
+    .mk-notes .mk-notes__detail-title{font-size:clamp(43px,11vw,58px)}
+    .mk-notes .mk-notes__detail-divider{margin:15px 0}
+    .mk-notes .mk-notes__detail-description{font-size:12px;margin-bottom:15px}
+    .mk-notes .mk-notes__note-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+    .mk-notes .mk-notes__footer{align-items:flex-start;flex-direction:column;gap:12px;margin-top:20px}
+  }
+  @media (max-width:380px) {
+    .mk-notes .mk-notes__detail{padding:18px 14px 24px}
+    .mk-notes .mk-notes__image{height:230px;max-width:215px}
+    .mk-notes .mk-notes__item-name{font-size:21px}
+  }
   @media(prefers-reduced-motion:reduce){.mk-notes__item,.mk-notes__item svg,.mk-notes__link{transition:none}}
 `;
 
